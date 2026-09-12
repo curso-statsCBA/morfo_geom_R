@@ -1,4 +1,3 @@
-# morfo_geom_R
 # Introducción a la Morfometría Geométrica en R 
 ## Aplicaciones en Métodos Comparativos Filogenéticos
 
