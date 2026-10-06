@@ -4,9 +4,11 @@ library(ggplot2)
 library(ggrepel)
 library(MASS)
 library(randomForest)
+library(mclust)
+library(vegan)
 
 # ============================================================
-# 0. PROCESADO DE FOTOS 
+# 0. PROCESADO DE FOTOS
 # ============================================================
 
 # digitizeImages(
@@ -20,7 +22,7 @@ library(randomForest)
 # 1. CARGAR SHAPES
 # ============================================================
 
-shapes <- readShapes("shapes")
+shapes <- readShapes("Práctico 3 - Lapas/Ejercicio/shapes")
 
 shapesGM <- readland.shapes(
   shapes,
@@ -28,7 +30,7 @@ shapesGM <- readland.shapes(
 )
 
 link <- read.table(
-  "link.txt",
+  "Práctico 3 - Lapas/Ejercicio/link.txt",
   header = FALSE,
   sep = ""
 )
@@ -125,8 +127,7 @@ ggplot(
     y = PC2,
     color = grupo
   )
-) +
-  
+) +  
   # Elipses solamente para los grupos conocidos
   stat_ellipse(
     data = subset(DAT, grupo != "Basurero"),
@@ -134,17 +135,14 @@ ggplot(
     level = 0.95,
     linewidth = 0.8
   ) +
-  
   geom_point(
     size = 3
   ) +
-  
   geom_text_repel(
     aes(label = indiv),
     size = 3,
     show.legend = FALSE
   ) +
-  
   theme_classic()
 
 
@@ -399,8 +397,6 @@ RF <- randomForest(
   importance = TRUE
 )
 
-RF
-
 
 ### B. Evaluación del modelo ---------------------------------
 
@@ -502,4 +498,41 @@ ggplot() +
   )
 
 
-#####################################################################################
+### =========================================================
+### 13. GAUSSIAN ADMIXTURE ANALYSIS
+### =========================================================
+
+### A. Buscar mejor modelo
+
+variables <- c("PC1", "PC2")
+BIC <- mclustBIC(DAT[, variables])
+plot(BIC)
+summary(BIC)
+BIC
+
+### Best model
+mod1 <- Mclust(DAT[, variables], x = BIC)
+summary(mod1, parameters = TRUE)
+
+### second model
+mod2 <- Mclust(DAT[, variables], G = 2, modelNames = "EEE")
+summary(mod2, parameters = TRUE)
+
+plot(mod1, what = "classification")
+
+plot(mod2, what = "classification")
+
+### B. comparación entre la clasificación a priori y con GMA
+table(DAT$grupo, mod1$classification)
+
+colores <- as.character(DAT$grupo)
+colores[colores == "Litoral"] <- "#e35e06"
+colores[colores == "Basurero"] <- "black"
+colores[colores == "Sublitoral"] <- "#0258af"
+
+plot(DAT[, c("PC1", "PC2")], type = "n")
+ordihull(
+  DAT[, c("PC1", "PC2")], groups = mod1$classification,
+  draw = "polygon", col = "grey", lwd = 0.1
+)
+points(DAT[, c("PC1", "PC2")], col = colores, pch = 19)
