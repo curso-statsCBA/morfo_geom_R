@@ -1,0 +1,158 @@
+---
+title: "Práctico 3"
+output:
+  html_document:
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GitHub Documents
+
+algo de las lapas.
+
+### Procesado de formas y Análisis de Componentes Principales
+
+```{r echo = TRUE, eval = FALSE}
+# ============================================================
+# 0. PROCESADO DE FOTOS
+# ============================================================
+
+# digitizeImages(
+#   image.file = 'images',
+#   shapes.file = 'shapes',
+#   landmarks.ref = paste("LM", c(1:2), sep = ""),
+#   curves.ref = "curves.txt"
+# )
+
+# ============================================================
+# 1. CARGAR SHAPES
+# ============================================================
+
+shapes <- readShapes("Práctico 3 - Lapas/Ejercicio/shapes")
+
+shapesGM <- readland.shapes(
+  shapes,
+  nCurvePts = c(15, 15)
+)
+
+link <- read.table(
+  "Práctico 3 - Lapas/Ejercicio/link.txt",
+  header = FALSE,
+  sep = ""
+)
+
+
+# ============================================================
+# 2. GENERALIZED PROCRUSTES ANALYSIS (GPA)
+# ============================================================
+
+Y.gpa <- gpagen(shapesGM)
+
+
+# ============================================================
+# 3. IDENTIFICAR GRUPOS E INDIVIDUOS
+# ============================================================
+
+# Nombres:
+# L01, L02... = Litoral
+# S01, S02... = Sublitoral
+# B01, B02... = Basurero
+
+grupo <- substr(
+  names(shapesGM$landmarks), 1, 1)
+
+indiv <- substr(
+  names(shapesGM$landmarks), 2, 3)
+
+# Convertir códigos a nombres descriptivos
+grupo <- factor(
+  grupo,
+  levels = c("L", "S", "B"),
+  labels = c("Litoral", "Sublitoral", "Basurero")
+)
+
+# Comprobar cantidad de individuos por grupo
+table(grupo)
+
+
+# Guardar información en el objeto GPA
+Y.gpa$grupo <- grupo
+Y.gpa$indiv <- indiv
+
+
+# ============================================================
+# 4. FORMA MEDIA
+# ============================================================
+
+ref <- mshape(Y.gpa$coords)
+
+
+# ============================================================
+# 5. PRINCIPAL COMPONENTS ANALYSIS (PCA)
+# ============================================================
+
+PCA <- gm.prcomp(Y.gpa$coords)
+
+summary(PCA)
+
+
+# ============================================================
+# 6. CONSENSUS / REFERENCE SHAPE
+# ============================================================
+
+plotRefToTarget(
+  ref,
+  ref,
+  links = link,
+  label = TRUE
+)
+
+
+# ============================================================
+# 7. DATA FRAME PARA GRAFICOS
+# ============================================================
+
+DAT <- data.frame(
+  PC1 = PCA$x[, 1],
+  PC2 = PCA$x[, 2],
+  PC3 = PCA$x[, 3],
+  log.CS = log(Y.gpa$Csize),
+  grupo = grupo,
+  indiv = names(shapesGM$landmarks)
+)
+
+
+# ============================================================
+# 8. PCA: LITORAL VS SUBLITORAL + BASURERO
+# ============================================================
+
+ggplot(
+  DAT,
+  aes(
+    x = PC1,
+    y = PC2,
+    color = grupo
+  )
+) +  
+  # Elipses solamente para los grupos conocidos
+  stat_ellipse(
+    data = subset(DAT, grupo != "Basurero"),
+    aes(group = grupo),
+    level = 0.95,
+    linewidth = 0.8
+  ) +
+  geom_point(
+    size = 3
+  ) +
+  geom_text_repel(
+    aes(label = indiv),
+    size = 3,
+    show.legend = FALSE
+  ) +
+  theme_classic()
+
+```
+

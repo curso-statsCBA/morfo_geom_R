@@ -33,7 +33,7 @@ El curso consta de clases teóricas, ejercicios y laboratorio de análisis de da
 
 ### Día 2.   
 * Teórico: Métodos multivariados en morfometría geométrica. Análisis de componentes principales (PCA) a partir de coordenadas de Procrustes. Análisis de variables Canónicas (CVA). Análisis Discriminante (LDA). Visualización de deformaciones.     
-* Práctico: Métodos multivariados y técnicas de visualización.   
+* Práctico: Métodos multivariados y técnicas de visualización. [LINK](Práctico 3 - Lapas/Ejercicio/Lapas.html)   
 * Teórico: Tipos de simetría y asimetría fluctuante. Alometría.      
 * Práctico: Análisis de la Varianza de Procrustes y regresiones alométricas. MANOVA. Extracción de residuales alométricos y PCA corregido por tamaño.
 
