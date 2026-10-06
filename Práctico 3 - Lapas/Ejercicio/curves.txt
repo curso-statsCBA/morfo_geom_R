@@ -1,0 +1,2 @@
+c1	LM1	LM2
+c2	LM2	LM1
