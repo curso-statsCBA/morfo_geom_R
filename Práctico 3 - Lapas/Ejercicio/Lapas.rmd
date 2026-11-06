@@ -11,8 +11,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## GitHub Documents
 
-Analizamos la variación morfológica de los 2 morfotipos de lapa antártica y evaluamos a cual morfotipo pertenecen los individuos predados por gaviota. 
-Descargar la carpeta "images" con las imagenes para digitalizar y los archivos link y curves.
+Analizamos la variación morfológica de los 2 morfotipos de lapa antártica y evaluamos a cuál morfotipo pertenecen los individuos predados por gaviota. 
+Descargar la carpeta "images" con las imágenes para digitalizar y los archivos link y curves.
 
 ### Procesado de formas y Análisis de Componentes Principales
 
