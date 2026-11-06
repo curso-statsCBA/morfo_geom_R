@@ -430,7 +430,7 @@ display: none;
 <p>Analizamos la variación morfológica de los 2 morfotipos de lapa
 antártica y evaluamos a cuál morfotipo pertenecen los individuos
 predados por gaviota. Descargar la carpeta “images” con las imágenes
-para digitalizar y los archivos link y curves.</p>
+para digitalizar y los archivos “link_lapas” y “curves_lapas”.</p>
 <div id="procesado-de-formas-y-análisis-de-componentes-principales" class="section level3">
 <h3>Procesado de formas y Análisis de Componentes Principales</h3>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># ============================================================</span></span>
@@ -441,7 +441,7 @@ para digitalizar y los archivos link y curves.</p>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#   image.file = &#39;images&#39;,</span></span>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#   shapes.file = &#39;shapes&#39;,</span></span>
 <span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#   landmarks.ref = paste(&quot;LM&quot;, c(1:2), sep = &quot;&quot;),</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#   curves.ref = &quot;curves.txt&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#   curves.ref = &quot;curves_lapas.txt&quot;</span></span>
 <span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co"># )</span></span>
 <span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a></span>
 <span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co"># ============================================================</span></span>
@@ -456,7 +456,7 @@ para digitalizar y los archivos link y curves.</p>
 <span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>)</span>
 <span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a></span>
 <span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>link <span class="ot">&lt;-</span> <span class="fu">read.table</span>(</span>
-<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>  <span class="st">&quot;Práctico 3 - Lapas/Ejercicio/link.txt&quot;</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>  <span class="st">&quot;Práctico 3 - Lapas/Ejercicio/link_lapas.txt&quot;</span>,</span>
 <span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>  <span class="at">header =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a>  <span class="at">sep =</span> <span class="st">&quot;&quot;</span></span>
 <span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a>)</span>
