@@ -6,7 +6,7 @@ Curso de posgrado para el doctorado en Cs. Biológicas de la Universidad Naciona
 
 Este curso se dictará del 16 al 20 de noviembre de 2026 en forma **presencial** el aula 700-701 del Centro Nacional PLM (frente al estacionamiento de la FCEFyN, Ciudad Universitaria).    
 
-El horario de cursado es de 9:00 a 18:00. Se debe asistir con su propia computadora personal y los softwares R y RStudio instalados y en su última versión. Se sugiere descargar previamente los siguientes paquetes: *geomorph", stereomorph*, *Morpho*, *phytools*, *Rphylo*, *geiger*, *mvMORPH*, *ggplot2* ...   
+El horario de cursado es de 9:00 a 18:00. Se debe asistir con su propia computadora personal y los softwares R y RStudio instalados y en su última versión. Se sugiere descargar previamente los siguientes paquetes: *geomorph", stereomorph*, *Morpho*, *Morphospace*,*phytools*, *Rphylo*, *geiger*, *mvMORPH*, *ggplot2* ...   
 
 ## Descarga del material práctico   
 [link](https://github.com/curso-statsCBA/morfo_geom_R/archive/refs/heads/main.zip)
