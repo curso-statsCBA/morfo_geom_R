@@ -14,6 +14,9 @@ knitr::opts_chunk$set(echo = TRUE)
 Analizamos la variación morfológica de los 2 morfotipos de lapa antártica y evaluamos a cuál morfotipo pertenecen los individuos predados por gaviota. 
 Descargar la carpeta "images" con las imágenes para digitalizar y los archivos link y curves.
 
+![](Práctico 3 - Lapas/Bajamar.png)
+![](Práctico 3 - Lapas/Plaemar.png)
+
 ### Procesado de formas y Análisis de Componentes Principales
 
 ```{r echo = TRUE, eval = FALSE}
