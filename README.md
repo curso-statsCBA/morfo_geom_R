@@ -34,7 +34,7 @@ El curso consta de clases teóricas, ejercicios y laboratorio de análisis de da
 ### Día 3.   
 * Teórico: Integración y modularidad.     
 * Práctico: Diseño de hipótesis de partición de módulos (anatómicos, funcionales y de desarrollo). Variación intra e interespecífica.      
-* Práctico: Mínimos cuadrados parciales (PLS) entre subconjuntos de landmarks.      
+Mínimos cuadrados parciales (PLS) entre subconjuntos de landmarks. [LINK](Práctico 5 - Modularidad/Modularidad.html)         
 * Práctico: Taller de análisis de datos aportados por estudiantes.   
 
 ### Día 4.   
