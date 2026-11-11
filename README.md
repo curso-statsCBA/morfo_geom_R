@@ -6,7 +6,15 @@ Curso de posgrado para el doctorado en Cs. Biológicas de la Universidad Naciona
 
 Este curso se dictará del 16 al 20 de noviembre de 2026 en forma **presencial** el aula 700-701 del Centro Nacional PLM (frente al estacionamiento de la FCEFyN, Ciudad Universitaria).    
 
-El horario de cursado es de 9:00 a 18:00. Se debe asistir con su propia computadora personal y los softwares R y RStudio instalados en su última versión. Se sugiere descargar previamente los siguientes paquetes: *ape*, *geomorph*, *StereoMorph*, *Morpho*, *Morphospace*, *phytools*, *RRphylo*, *geiger*, *mvMORPH*, *ggplot2*, *readxl*, *MASS*, *randomforest*, *paleotree* ...   
+El horario de cursado es de 9:00 a 18:00. Se debe asistir con su propia computadora personal y los softwares R y RStudio instalados en su última versión. Se sugiere descargar previamente los siguientes paquetes: *ape*, *dplyr*, *geiger*, *geomorph*, *ggplot2*, *ggrepel*, *Hmisc*, *magrittr*, *MASS*, *mclust*, *Morpho*, *morphospace*, *mvMORPH*, *paleotree*, *phytools*, *randomForest*, *RCurl*, *readxl*, *remotes*, *RRphylo*, *RRPP*, *StereoMorph*, *svglite*, *vegan*, *viridis*.
+
+Para el práctico 9 necesitaremos el paquete phylo.fda. Para instalarlo ingresar en R:   
+
+```
+remotes::install_github("lschmitz/phylo.fda")
+library(phylo.fda)
+```
+
 
 ## Descarga del material práctico   
 [link](https://github.com/curso-statsCBA/morfo_geom_R/archive/refs/heads/main.zip)
