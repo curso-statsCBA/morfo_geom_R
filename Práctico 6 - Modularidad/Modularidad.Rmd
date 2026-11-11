@@ -1,5 +1,5 @@
 ---
-title: "Práctico 5"
+title: "Práctico 6: Modularidad e Integración"
 output:
   html_document:
     highlight: tango
