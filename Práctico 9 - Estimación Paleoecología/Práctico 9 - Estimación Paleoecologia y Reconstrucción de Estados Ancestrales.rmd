@@ -1,0 +1,335 @@
+---
+title: "Práctico 9 - Incorporación de fósiles en filogenias y estimación de paleoecología"
+output:
+  html_document:
+    highlight: tango
+---
+Docente Manuel Ignacio Stefanini
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r echo = TRUE, eval = FALSE}
+#Práctico 9. Incorporación de fósiles en filogenias y estimación de paleoecología
+
+#Insertar un fósil en una filogenia molecular a partir de edad estratigrafica conocida y una hipotesis taxonómica definida (se puede incorporar también incertidumbre filogenética para el fósil)
+#vamos utilizar el metodo de "equal branching" desarrollado por 
+
+rm(list=ls(all=TRUE))
+library(StereoMorph)
+library(morphospace)
+library(Morpho)
+library(geomorph)
+library(magrittr)
+library(ape)
+library(paleotree)
+
+#Obtenemos las coordenadas crudas
+Shapesfurn<-readShapes(file='Shapes')
+
+Shapes_Beak_Furnariids_with_sliding_semilandmarks<-readland.shapes(Shapesfurn,nCurvePts=c(10,10,13))
+#Shapes_Neurocranium_Furnariids_without_sliding_semilandmarks<-readland.shapes(Shapesfurn,nCurvePts=NULL)
+
+myGPA <- gpagen(Shapes_Beak_Furnariids_with_sliding_semilandmarks) # GPA perfomed with minimized bending energy
+plot(myGPA)
+
+#84sps del dataset de furnáridos. Vamos a excluir a Cinclodes nigrofumosus y la vamos a tratar como fósil, asignandole una edad estratigrafica ficticia
+Species<-factor(c("Geositta_cunicularia","Geositta_punensis","Sclerurus_caudacutus","Sclerurus_rufigularis","Sclerurus_scansor","Dendrocincla_anabatina","Dendrocincla_homochroa","Dendrocincla_merula","Dendrocolaptes_certhia","Dendrocolaptes_platyrostris","Drymornis_bridgesii","Glyphorynchus_spirurus","Glyphorynchus_spirurus","Lepidocolaptes_affinis","Lepidocolaptes_angustirostris","Lepidocolaptes_angustirostris","Lepidocolaptes_falcinellus","Lepidocolaptes_fuscicapillus","Sittasomus_griseicapillus","Xiphocolaptes_major","Xiphorhynchus_flavigaster","Xiphorhynchus_guttatus","Xiphorhynchus_obsoletus","Xiphorhynchus_spixii","Berlepschia_rikeri","Berlepschia_rikeri","Xenops_minutus","Xenops_minutus","Xenops_minutus","Xenops_rutilans","Pygarrhichas_albogularis","Pygarrhichas_albogularis","Pygarrhichas_albogularis","Ochetorhynchus_phoenicurus","Premnornis_guttuliger","Pseudocolaptes_boissonneautii","Pseudocolaptes_lawrencii","Tarphonomus_certhioides","Cinclodes_fuscus","Cinclodes_fuscus","Cinclodes_oustaleti","Cinclodes_patagonicus","Cinclodes_patagonicus","Cinclodes_patagonicus","Furnarius_figulus","Furnarius_leucopus","Furnarius_leucopus","Furnarius_rufus","Furnarius_rufus","Furnarius_rufus","Furnarius_rufus","Furnarius_torridus","Limnornis_curvirostris","Phleocryptes_melanops","Phleocryptes_melanops","Phleocryptes_melanops","Upucerthia_dumetaria","Upucerthia_dumetaria","Anumbius_annumbi","Anumbius_annumbi","Anumbius_annumbi","Aphrastura_spinicauda","Aphrastura_spinicauda","Asthenes_baeri","Asthenes_dorbignyi","Asthenes_modesta","Asthenes_pyrrholeuca","Certhiaxis_cinnamomeus","Certhiaxis_cinnamomeus","Coryphistera_alaudina","Cranioleuca_demissa","Cranioleuca_gutturata","Leptasthenura_aegithaloides","Leptasthenura_aegithaloides","Leptasthenura_platensis","Leptasthenura_striata","Limnoctites_rectirostris","Phacellodomus_ruber","Phacellodomus_ruber","Phacellodomus_striaticollis","Phacellodomus_striaticollis","Pseudoseisura_gutturalis","Pseudoseisura_lophotes","Pseudoseisura_lophotes","Pseudoseisura_lophotes","Schoeniophylax_phryganophilus","Synallaxis_cinerascens","Synallaxis_frontalis","Synallaxis_ruficapilla","Synallaxis_rutilans","Synallaxis_scutata","Synallaxis_spixi","Margarornis_squamiger","Premnoplex_brunnescens","Anabacerthia_lichtensteini","Anabacerthia_ruficaudata","Anabazenops_dorsalis","Ancistrops_strigilatus","Automolus_infuscatus","Automolus_melanopezus","Automolus_ochrolaemus","Automolus_ochrolaemus","Automolus_paraensis","Clibanornis_rubiginosus","Dendroma_rufa","Heliobletus_contaminatus","Philydor_erythrocercum","Philydor_pyrrhodes","Syndactyla_rufosuperciliata","Syndactyla_rufosuperciliata","Thripadectes_holostictus","Thripadectes_rufobrunneus"))
+
+
+#Cargar la topología de Harvey et al 2020 y excluir las especies presentes en los datos de morfometria geometrica
+tree0<-read.tree("Harvey_et_al_2020.tre")
+# Comprobar que todas las especies estén en la filogenia
+faltantes <- setdiff(levels(Species), tree0$tip.label)
+
+length(faltantes)
+faltantes
+
+stopifnot(length(faltantes) == 0)
+
+tree <- drop.tip(tree0, tip = tree0$tip.label[!tree0$tip.label%in%levels(Species)])
+plot(tree,cex=0.4)
+
+#Obtenemos las coordenadas de Procrustes consenso de cada especie y hacemos que el orden de los nombres siga el de la filogenia
+consensus_l<-expected_shapes(myGPA$coords, Species)#expected_shapes es una función del paquete morphospace
+consensus_l<-consensus_l[,,dimnames(consensus_l)[[3]]%in%tree$tip.label]
+shapes_a <- consensus_l[,,tree$tip.label]
+
+#Importante: comprobar si los valores consenso de las especies en la matriz de coordenadas de Procrustes tienen el mismo orden que en la filogenia (debe dar TRUE) para evitar resultados espurios en distintos análisis filogenéticos.
+identical(dimnames(shapes_a)[[3]], tree$tip.label)
+
+all(tree$tip.label %in% dimnames(consensus_l)[[3]])
+
+#Creamos el objeto R con las coordenadas para usarlo en futuras sesiones
+save(shapes_a,file="shapes_a_84_PICO.RData")
+#Podemos exportar en .csv también
+write.csv(shapes_a,"shapes_a_84_PICO.csv")
+
+#Extraemos el Tamaño del Centroide (CS) obtenido previamente en el GPA
+sizes_l<-tapply(X=myGPA$Csize, INDEX = Species, FUN=mean)
+sizes_l<-sizes_l[names(sizes_l)%in%tree$tip.label]
+#Reordenar los nombres de las especies en función de la filogenia
+sizes_l <- c(sizes_l[tree$tip.label])
+
+#Chequear que esta ok el orden de los nombres
+identical(names(sizes_l), tree$tip.label)
+#y tambien chequeamos que no se hayan introducido NAs por coerción
+all(tree$tip.label %in% names(sizes_l))
+
+#Obtenemos los residuos sin alometría de las coordenadas de Procrustes (Esto puede hacerse con una regresión lineal no-filogenética si no tienen filogenia)
+shapes_na<-lm(two.d.array(shapes_a) ~ log(sizes_l)) %>% detrend_shapes(tree = tree) %>% arrayspecs(p = nrow(shapes_a), k = 2)
+
+# Revisar los taxones terminales
+tree$tip.label
+
+# Comprobar si está enraizado
+is.rooted(tree)
+
+# Comprobar si es ultramétrico
+is.ultrametric(tree)
+
+#Da falso pero es practicamente ultrametrico si miramos los valores minimos y maximos de largos de rama
+
+#Podemos comprobarlo asignando una tolerancia minima
+is.ultrametric(tree, tol = 1e-6)
+
+is.ultrametric(tree, tol = 1e-5)
+
+#Si da TRUE, lo cual significa que podemos tratarlo como ultrametrico sin problemas. Si este no fuera el caso habria que convertirlo a ultrametrico usando algun metodo inferencial probabilistico
+
+#Chequear si todo ok
+is.rooted(tree)
+is.ultrametric(tree, tol = 1e-6)
+
+# Visualizar
+plot(tree, cex = 0.5, no.margin = TRUE)
+
+# Revisar las longitudes de las ramas
+summary(tree$edge.length)
+
+# Edad del fósil simulado
+fossil_age <- 0.001
+
+# Número de punta de Cinclodes patagonicus
+tip_pat <- which(tree$tip.label == "Cinclodes_patagonicus")
+
+# Nodo ancestral inmediato de C. patagonicus
+node_pat <- tree$edge[
+  tree$edge[, 2] == tip_pat, 1
+]
+
+tip_pat
+node_pat
+
+#Entonces tenemos: Punta de C. patagonicus: 28. Nodo ancestral inmediato: 120. Longitud de la rama terminal: 4.514234 Ma.
+
+#La distancia desde el nodo 120 hasta el punto de inserción será: 4.514234 - 0.001 = 4.513234 {Ma}
+#bindPaleoTip() permite especificar tanto la edad de la punta fósil (tipAge) como la posición de inserción sobre la rama (positionBelow)
+
+tree_fossil <- phytools::bind.tip(
+  tree,
+  tip.label = "Cinclodes_nigrofumosus",
+  where = tip_pat,
+  position = 4.0,
+  edge.length = 3.9
+)
+
+
+#Comprobamos que C nigrofumosus quedo como grupo hermano de C patagonicus
+tree_4 <- ape::keep.tip(
+  tree_fossil,
+  c("Cinclodes_patagonicus",
+    "Cinclodes_nigrofumosus",
+    "Cinclodes_fuscus",
+    "Cinclodes_oustaleti")
+)
+
+plot(tree_4, show.tip.label = TRUE)
+axisPhylo()
+
+#Confirmar la topologia
+ape::is.monophyletic(
+  tree_fossil,
+  c("Cinclodes_patagonicus",
+    "Cinclodes_nigrofumosus")
+)
+
+ape::is.monophyletic(
+  tree_fossil,
+  c("Cinclodes_fuscus",
+    "Cinclodes_oustaleti")
+)
+
+ape::is.monophyletic(
+  tree_fossil,
+  c("Cinclodes_patagonicus",
+    "Cinclodes_nigrofumosus",
+    "Cinclodes_fuscus",
+    "Cinclodes_oustaleti")
+)
+
+#Comprobar la edad del fósil
+max(node.depth.edgelength(tree)) -
+  node.depth.edgelength(tree_fossil)[
+    match("Cinclodes_nigrofumosus",
+          tree_fossil$tip.label)
+  ]
+
+#Comprobar que no alteramos las especies actuales
+depths_new <- node.depth.edgelength(tree_fossil)[
+  match(tree$tip.label, tree_fossil$tip.label)
+]
+
+max(abs(depths_new - depths_original))
+
+#Guardamos
+save(
+  tree_fossil,
+  file = "tree_85_Cinclodes_nigrofumosus_100ka.RData"
+)
+
+write.tree(
+  tree_fossil,
+  file = "tree_85_Cinclodes_nigrofumosus_100ka.tre"
+)
+
+
+#Estimación de paleoecología con LDA flexible filogenético
+#Variable ecológica: Tipo de nido
+library(readxl)
+data <- read_excel("Furnariidae_107_sps_Ecological_Variables.xlsx", 
+                   sheet = "Type_of_Nest")
+data <- as.data.frame(data)
+rownames(data) <- data[,1]
+data <- data[,-1]
+data <- data[rownames(data) %in% tree_fossil$tip.label, ][tree_fossil$tip.label, ]
+
+Type_of_Nest<-as.factor(data$Type_of_Nest)
+names(Type_of_Nest)<-rownames(data)
+
+ls()
+
+# Variable ecológica de las 84 especies actuales
+nest_extant <- Type_of_Nest[tree$tip.label]
+# Estado ecológico asignado al fósil
+nest_fossil <- Type_of_Nest["Cinclodes_nigrofumosus"]
+
+length(nest_extant)  # 84
+nest_fossil          # categoría real del fósil
+
+#Preparar la matriz morfometrica
+# Transformar coordenadas en matriz
+X <- geomorph::two.d.array(shapes_a)
+
+# Verificar dimensiones y correspondencia
+dim(X)
+identical(rownames(X), tree$tip.label)
+
+
+install.packages("RCurl")
+install.packages("remotes")
+remotes::install_github("lschmitz/phylo.fda")
+
+library(phylo.fda)
+ls("package:phylo.fda")
+
+
+#Comprobar que todo esta alineado correctamente
+# Ordenar explícitamente los datos según el árbol
+X_pFDA <- X[tree$tip.label, , drop = FALSE]
+nest_pFDA <- droplevels(nest_extant[tree$tip.label])
+
+# Comprobar correspondencia
+dim(X_pFDA)
+length(nest_pFDA)
+length(tree$tip.label)
+
+identical(rownames(X_pFDA), tree$tip.label)
+identical(names(nest_pFDA), tree$tip.label)
+
+#Vemos cuantos fueron clasificados en cada categoria
+table(nest_pFDA)
+
+#optLambda() busca el valor de λ que minimiza la suma de cuadrados residual entre morfología y categoría ecológica, evaluando valores entre 0 y 1
+# PCA sobre las coordenadas de forma
+pca_nest <- prcomp(X_pFDA, center = TRUE, scale. = FALSE)
+
+# Varianza explicada
+summary(pca_nest)
+
+# Número de dimensiones con varianza no nula
+sum(pca_nest$sdev > 1e-10)
+
+# Retener los primeros 4 componentes
+X_pFDA4 <- pca_nest$x[, 1:4]
+
+# Comprobar alineación
+identical(rownames(X_pFDA4), tree$tip.label)
+
+# Optimizar lambda
+lambda_opt <- optLambda(
+  measurements = X_pFDA4,
+  grps = nest_pFDA,
+  mytree = tree,
+  sstep = 0.01,
+  srange = c(0, 1)
+)
+
+lambda_opt
+str(lambda_opt)
+
+# Retener los primeros 4 componentes
+X_pFDA4 <- pca_nest$x[, 1:4]
+
+# Comprobar alineación
+identical(rownames(X_pFDA4), tree$tip.label)
+
+# Optimizar lambda
+lambda_opt <- optLambda(
+  measurements = X_pFDA4,
+  grps = nest_pFDA,
+  mytree = tree,
+  sstep = 0.01,
+  srange = c(0, 1)
+)
+
+lambda_opt
+str(lambda_opt)
+
+
+#Esto indica que, según el criterio de optimización de optLambda(), el menor RSS se obtiene con una corrección filogenética relativamente alta. El mínimo está bien definido: el RSS desciende hasta 0.82 y luego vuelve a aumentar
+
+#Ajustar pFDA
+fit_pFDA <- phylo.fda(
+  data = X_pFDA4,
+  grp = nest_pFDA,
+  tree = tree,
+  lambda = lambda_opt$optlambda
+)
+
+str(fit_pFDA, max.level = 2)
+
+fit_pFDA$confusion
+fit_pFDA$prior
+
+methods(class = "phylo.fda")
+
+getS3method("predict", "phylo.fda")
+
+
+#Clasificar el "fósil"
+load("Beak_full_shape_coordinates_sps_means.RData")# contiene el objeto shapes_a con 85 especies (incluye a C nigrofumosus)
+
+X85 <- geomorph::two.d.array(shapes_a85)
+
+
+X_fossil <- X85["Cinclodes_nigrofumosus", , drop = FALSE]
+
+
+PC_fossil <- predict(pca_nest, newdata = X_fossil)[, 1:4, drop = FALSE]
+
+predict(fit_pFDA, newdata = PC_fossil, type = "class")
+
+predict(fit_pFDA, newdata = PC_fossil, type = "posterior")
+
+```
+

@@ -1,0 +1,70 @@
+#Práctico 10 - Macroevolución. Parte 2. Tasas de evolución fenotípica
+library(RRphylo)
+library(readxl)
+
+#search.shift() compara la diferencia de tasa observada con una distribución nula generada mediante aleatorizaciones.
+#Con set de datos furnaridos
+fullshapecoords<-two.d.array(shapes_a)
+
+#Calculo de regresiones de RidgeRace
+RRphylo(tree=tree_l,y=fullshapecoords,clus=0)->RRcova
+
+#plotRR(RRcova,fullshapecoords,multivariate="multiple.rates")->pRR #presenta cada una de las variables cuantificadas# Util si estan trabajando con distintos PCs
+plotRR(RRcova,fullshapecoords,multivariate="rates")->pRR #presenta una variable promedio de todas las variables cuantificadas, esta es la opcion cuando se usan todas las coordenadas de Procrustes (también se puede usar para un resumen de los PCs significativos)
+
+pRR$plotRRphen(variable=1,tree.args=list(edge.width=2,cex=0.2),color.pal=hcl.colors,
+               colorbar.args = list(x="bottomleft",labs.adj=0.7,xpd=TRUE))
+
+#Busqueda automatica de cambios
+search.shift(RR=RRcova,status.type="clade")->SSauto
+
+plotShift(RR=RRcova,SS=SSauto)->plotSSauto
+plotSSauto$plotClades()
+
+plot(RRcova$tree,cex=0.4)
+addShift(SS=SSauto)
+
+#Comparación entre categorias de una variable (e.g., ecológica, ambiental, comportamental)
+data <- read_excel("Furnariidae_107_sps_Ecological_Variables.xlsx", 
+                   sheet = "Type_of_Nest")
+data <- as.data.frame(data)
+rownames(data) <- data[,1]
+data <- data[,-1]
+data <- data[rownames(data) %in% tree_l$tip.label, ][tree_l$tip.label, ]
+
+Type_of_Nest<-as.factor(data$Type_of_Nest)
+names(Type_of_Nest)<-rownames(data)
+
+search.shift(RR=RRcova,status.type= "sparse",state=Type_of_Nest)->SSstate
+plotShift(RR=RRcova,SS=SSstate,state=Type_of_Nest)->plotSSstate
+plotSSstate$plotStates(points.args=list(bg=c("gold","forestgreen","royalblue","white"),
+                                        col=c("black","black","black","orangered"),
+                                        pch=c(21,22,24,11)),legend.args=list())
+
+SSstate
+
+################################################################################################################
+#Con geomorph que usa otro método diferente de estimación de tasas podemos estimar las tasas de dos o mas grupos de interés para comparar con RRphylo
+library(geomorph)
+
+rates_nest <- compare.evol.rates(A = shapes_a,
+  phy = tree_l,
+  gp = Type_of_Nest,
+  iter = 9999,
+  method = "simulation"
+)
+
+summary(rates_nest)
+
+#Con geomorph también se pueden comparar distintas regiones anatómicas
+#Comparamos pico contra neurocráneo en furnáridos
+#Para este análisis cargamos set de datos del cráneo completo de furnáridos para 83 especies
+
+load("Skull_full_shape_coordinates_83_sps_means.RData")
+load("tree_83_sps.RData")
+
+#Generamos la hipótesis de modularidad evolutiva que resultó significativa en los análisis de modularidad
+land.gpsH1<-c("A","A","A","A","A","A","B","B","B","B","B","B","B","B","B","B","B","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A","A")
+EMR<-compare.multi.evol.rates(A=shapes_a,gp=land.gpsH1,Subset=TRUE, phy= tree_83sps,iter=999)
+summary(EMR)
+plot(EMR)

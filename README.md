@@ -15,13 +15,8 @@ remotes::install_github("lschmitz/phylo.fda")
 library(phylo.fda)
 ```
 
-
 ## Descarga del material práctico   
 [link](https://github.com/curso-statsCBA/morfo_geom_R/archive/refs/heads/main.zip)
-
-## Links útiles   
-
-* Ayuda general... 
 
 ## Cronograma simplificado.   
 
@@ -50,9 +45,9 @@ Mínimos cuadrados parciales (PLS) entre subconjuntos de landmarks. [LINK](Prác
 * Teórico: Métodos comparativos filogenéticos.     
 * Práctico 8: Importación y manipulación básica de árboles filogenéticos. Señal filogenética. Filomorfoespacios y Análisis de Componentes Principales Filogenéticos. Regresiones lineales (mínimos cuadrados generalizados filogenéticos, MANOVA filogenético). Modularidad evolutiva. [LINK](Práctico 8 - Met Comp/Práctico_8_Introducción_Métodos_Comparativos.html)            
 * Teórico: Fósiles en filogenias moleculares y paleoecología.      
-* Práctico 9: Incorporación de fósiles en filogenias moleculares y estimación de paleoecología.     
+* Práctico 9: Incorporación de fósiles en filogenias moleculares y estimación de paleoecología. [LINK](Práctico 9 - Estimación Paleoecología/Práctico-9---Estimación-Paleoecologia-y-Reconstrucción-de-Estados-Ancestrales.html)     
 
 ### Día 5.   
-* Teórico:  Macroevolución.     
-* Práctico 10: Tempo: tasas de evolución fenotípica, Modo: disparidad morfológica, modelos macroevolutivos.      
+* Teórico: Macroevolución.      
+* Práctico 10: Tempo: tasas de evolución fenotípica, Modo: disparidad morfológica, modelos macroevolutivos. [LINK_1](Práctico 10 - Macroevolución/Práctica_10_Macroevolución_Parte_1.html), [LINK_2](Práctico 10 - Macroevolución/Práctico_-10_Macroevolución_Parte_2.html), [LINK_3](Práctico 10 - Macroevolución/Práctico_Macroevolución_10_Parte_3.html)      
 * Evaluación.     

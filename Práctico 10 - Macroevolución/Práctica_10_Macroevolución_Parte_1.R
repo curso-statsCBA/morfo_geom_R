@@ -1,0 +1,380 @@
+#Práctica 10 20 de noviembre de 2026
+#Macroevolución
+rm(list=ls(all=TRUE))
+library(StereoMorph)
+library(geomorph)
+library(ape)
+library(phytools)
+library(morphospace)
+library(mvMORPH)
+library(Morpho)
+library(RRphylo)
+library(geiger)
+library(readxl)
+
+load("Beak_full_shape_coordinates_sps_means.RData")# contains shapes_a object
+load("Beak_non_allometric_shape_coordinates_sps_means.RData")# contains shapes_na object
+load("Beak_Centroid_Size_sps_means.RData") 
+
+#Cargamos la filogenia generada en la práctica 6 con 85 especies de furnáridos recortadas de Harvey et al 2020
+load("tree_85_sps.RData")
+plot(tree_l,cex=0.4)
+
+#Importante: comprobar si los valores consenso de las especies en la matriz de coordenadas de Procrustes tienen el mismo orden que en la filogenia (debe dar TRUE) para evitar resultados espurios en distintos análisis filogenéticos.
+identical(dimnames(shapes_a)[[3]], tree_l$tip.label)
+
+#all(tree_l$tip.label %in% dimnames(consensus_l)[[3]])
+
+#Extraemos el Tamaño del Centroide (CS) obtenido previamente en el GPA
+#sizes_l<-tapply(X=myGPA$Csize, INDEX = Species, FUN=mean)
+#sizes_l<-sizes_l[names(sizes_l)%in%tree_l$tip.label]
+#reorder sizes objects
+#sizes_l <- c(sizes_l[tree_l$tip.label])
+
+#get shapes of non-allometric shape coordinates
+#shapes_na<-lm(two.d.array(shapes_a) ~ log(sizes_l)) %>% detrend_shapes(tree = tree_l) %>% arrayspecs(p = nrow(shapes_a), k = 2)
+
+#Análisis de Componentes Principales
+fullshapecoords<-two.d.array(shapes_a)
+pca<-prcomp(two.d.array(shapes_a))
+plot(pca$x,col=Species)
+summary(pca)
+todos_los_pcs<-data.frame(pca$x)
+todos_los_pcs <- todos_los_pcs[rownames(todos_los_pcs)%in%tree_l$tip.label,][tree_l$tip.label,]
+PC1<-setNames(todos_los_pcs$PC1, rownames(todos_los_pcs))
+PC1a5<-todos_los_pcs[,1:5]
+
+#Disparidad a través del tiempo (DTT) (Filogenético)
+library(geiger)
+#con todas las coordenadas de Procrustes 
+dttcul<-dtt(phy=tree_l, data=fullshapecoords, nsim=1000, plot=TRUE) #cambiar los valores de simulación por 10 y 1000 (nsim) y observar las diferentes curvas de disparidad
+#PC1 al PC5
+dttcul<-dtt(phy=tree_l, data=PC1a5_na, nsim=1000, plot=TRUE)
+#para el PC1
+dttcul<-dtt(phy=tree_l, data=PC1_na, nsim=1000, plot=TRUE) 
+
+#Disparidad morfológica pareada (no filogenética)
+data <- read_excel("Furnariidae_107_sps_Ecological_Variables.xlsx", 
+                   sheet = "Type_of_Nest")
+data <- as.data.frame(data)
+rownames(data) <- data[,1]
+data <- data[,-1]
+data <- data[rownames(data) %in% tree_l$tip.label, ][tree_l$tip.label, ]
+
+#Con tipo de nido
+Type_of_Nest<-as.factor(data$Type_of_Nest)
+names(Type_of_Nest)<-rownames(data)
+
+#Coordenadas de forma
+DisKiN <- geomorph.data.frame(shapes_a,Type_of_Nest = Type_of_Nest)
+morphol.disparity(shapes_a ~ 1, groups= ~ Type_of_Nest, data = DisKiN,iter = 999, print.progress = FALSE)
+#Coordenadas de forma No-alométrica
+DisKiN <- geomorph.data.frame(shapes_na,Type_of_Nest = data$Type_of_Nest)
+morphol.disparity(shapes_na ~ 1, groups= ~ Type_of_Nest, data = DisKiN,iter = 999, print.progress = FALSE)
+
+#Con tipo de kinesis
+Kinesis<-as.factor(data$Kinesis)
+names(Kinesis)<-rownames(data)
+
+#Coordenadas de forma
+DisKiN <- geomorph.data.frame(shapes_a,Kinesis = data$Kinesis)
+morphol.disparity(shapes_a ~ 1, groups= ~ Kinesis, data = DisKiN,iter = 999, print.progress = FALSE)
+#Coordenadas de forma No-alométrica
+DisKiN <- geomorph.data.frame(shapes_na,Kinesis = data$Kinesis)
+morphol.disparity(shapes_na ~ 1, groups= ~ Kinesis, data = DisKiN,iter = 999, print.progress = FALSE)
+
+#Ajuste a modelos con mvMORPH (otros mvSLOUCH)
+library(mvMORPH)
+library(phytools)
+library(readxl)
+
+data <- read_excel("Furnariidae_107_sps_Ecological_Variables.xlsx", 
+                   sheet = "Type_of_Nest")
+data <- as.data.frame(data)
+rownames(data) <- data[,1]
+data <- data[,-1]
+data <- data[rownames(data) %in% tree_l$tip.label, ][tree_l$tip.label, ]
+
+Type_of_Nest<-as.factor(data$Type_of_Nest)
+names(Type_of_Nest)<-rownames(data)
+treesimmNest<-make.simmap(tree_l,Type_of_Nest,model="ER",nsim = 1)# esto genera una sola reconstruccion de estados ancestrales estocastica. Lo ideal de cara a una publicación es generar 99 y correr OUM y BMM sobre las 99 
+cols2 <- setNames(c("#009E73", "#CC79A7"), c("0", "1"))
+plot(treesimmNest,fsize=0.5, colors = cols2)
+
+#Ajuste a modelos usando criterio de Akaike
+library(mvMORPH)
+#Lo ideal es hacerlo con todos los PCs significativos. Para el set de datos de furnáridos son 5 PCs. 
+fit_BM<-mvBM(tree_l, PC1a5, model="BM1")
+fit_BMM<-mvBM(treesimmNest, PC1a5, model="BMM")
+fit_OU1<-mvOU(tree_l, PC1a5, model="OU1")
+fit_OUM<-mvOU(treesimmNest, PC1a5, model="OUM")
+fit_EB<-mvEB(tree_l, PC1a5)
+
+#Construir tabla comparativa de los AIC
+AIC_table <- data.frame(
+  Model = c("BM1", "BMM", "OU1", "OUM", "EB"),
+  AIC = c(
+    AIC(fit_BM),
+    AIC(fit_BMM),
+    AIC(fit_OU1),
+    AIC(fit_OUM),
+    AIC(fit_EB)
+  )
+)
+
+AIC_table <- AIC_table[order(AIC_table$AIC), ]
+
+AIC_table$Delta_AIC <- AIC_table$AIC - min(AIC_table$AIC)
+
+AIC_table
+
+#Calcular los pesos de Akaike
+AIC_table$Weight <- exp(-0.5 * AIC_table$Delta_AIC) /
+  sum(exp(-0.5 * AIC_table$Delta_AIC))
+
+AIC_table
+
+#Para tamaños muestrales pequeños conviene informar el AIC corregido por tamaño muestral (AICc)
+AICc_table <- data.frame(
+  Model = c("BM1", "BMM", "OU1", "OUM", "EB"),
+  LogLik = c(
+    fit_BM$LogLik,
+    fit_BMM$LogLik,
+    fit_OU1$LogLik,
+    fit_OUM$LogLik,
+    fit_EB$LogLik
+  ),
+  AIC = c(
+    fit_BM$AIC,
+    fit_BMM$AIC,
+    fit_OU1$AIC,
+    fit_OUM$AIC,
+    fit_EB$AIC
+  ),
+  AICc = c(
+    fit_BM$AICc,
+    fit_BMM$AICc,
+    fit_OU1$AICc,
+    fit_OUM$AICc,
+    fit_EB$AICc
+  )
+)
+
+AICc_table <- AICc_table[order(AICc_table$AICc), ]
+
+AICc_table$Delta_AICc <- AICc_table$AICc - min(AICc_table$AICc)
+
+AICc_table$Weight <- exp(-0.5 * AICc_table$Delta_AICc) /
+  sum(exp(-0.5 * AICc_table$Delta_AICc))
+
+AICc_table
+
+
+#Evaluamos convergencia de los modelos (si el algoritmo de optimización logró alcanzar un criterio de convergencia)
+#valor 0 indica convergencia exitosa del optimizador
+fit_BM$convergence
+fit_BMM$convergence
+fit_OU1$convergence
+fit_OUM$convergence
+fit_EB$convergence
+
+#BM da 52, significa que no alcanzo una convergencia exitosa.
+#Se puede probar con cambiar el metodo de ajuste o el tipo de optimización:
+
+fit_BM_NM <- mvBM(
+  tree_l,
+  PC1a5,
+  model = "BM1",
+  method = "rpf",
+  optimization = "Nelder-Mead",
+  control = list(maxit = 20000)
+)
+
+#Evaluamos los valores Hess: valores negativos de los minimos pueden ser indicador de que hay problemas de curvatura o identificabilidad mas allá de la convergencia
+lapply(
+  list(
+    BM1 = fit_BM_NM,
+    BMM = fit_BMM,
+    OU1 = fit_OU1,
+    OUM = fit_OUM,
+    EB = fit_EB
+  ),
+  function(x) {
+    if (!is.null(x$param$opt$hessian)) {
+      eigen(
+        x$param$opt$hessian,
+        symmetric = TRUE,
+        only.values = TRUE
+      )$values
+    } else {
+      NA
+    }
+  }
+)
+
+
+#OU1 con 5 PCs arroja valores minimos de Hess negativos. Se puede probar nuevamente cambiando el metodo de optimización
+#Probamos con un modelo mas sencillo: 1 solo PC
+fit_BM<-mvBM(tree_l, PC1, model="BM1")
+
+#Da solución confiable
+#La confiabilidad tenia que ver con la dimensionalidad de los datos de forma. Con 1 PC se estiman solo 4 parametros en lugar de los 40 parametros que se estiman con 5 PCs. Para 85 especies, 40 parametros puede ser mucho
+
+#Se puede probar con un ajuste que reduzca la cantidad de parametros estimados. Seleccionando "diagonal" en decomp, se calcula un OU multivariado en el que cada PC tiene su propio parámetro de selección, pero sin estimar interacciones entre los PCs en la matriz alpha. Esto reduce de 15 a 5 los parámetros de alpha, manteniendo inicialmente la matriz sigma completa.
+fit_OU1_diag <- mvOU(
+  tree_l,
+  PC1a5,
+  model = "OU1",
+  method = "rpf",
+  param = list(
+    root = TRUE,
+    decomp = "diagonal"
+  )
+)
+
+#Da nuevamente solución no confiable. Se puede simplificar un poco mas el modelo. 
+
+fit_OU1_diag2 <- mvOU(
+  tree_l,
+  PC1a5,
+  model = "OU1",
+  method = "rpf",
+  param = list(
+    root = TRUE,
+    decomp = "diagonal",
+    decompSigma = "diagonal"
+  )
+)
+
+# Esto hace que no se estimen covarianzas evolutivas (sigmas) entre los PCs. Reduce los parametros de 30 a 20.
+#Da confiable, chequeamos los valores de convergencia y los valores de Hess.
+
+fit_OU1_diag2$convergence
+fit_OU1_diag2$hess.values
+
+eigen(
+  fit_OU1_diag2$param$opt$hessian,
+  symmetric = TRUE,
+  only.values = TRUE
+)$values
+
+#Todos los valores dan bien. Nos quedamos con este ajuste para OU1.
+#Calcular la tabla definitiva:
+modelos <- list(
+  BM1 = fit_BM_NM,
+  BMM = fit_BMM,
+  OU1 = fit_OU1_diag2,
+  OUM = fit_OUM,
+  EB  = fit_EB
+)
+
+tabla_modelos <- data.frame(
+  Modelo = names(modelos),
+  LogLik = sapply(modelos, function(x) x$LogLik),
+  AIC = sapply(modelos, function(x) x$AIC),
+  AICc = sapply(modelos, function(x) x$AICc)
+)
+
+tabla_modelos$Delta_AICc <- tabla_modelos$AICc - min(tabla_modelos$AICc)
+
+tabla_modelos$Peso_AICc <- 
+  exp(-0.5 * tabla_modelos$Delta_AICc) /
+  sum(exp(-0.5 * tabla_modelos$Delta_AICc))
+
+tabla_modelos <- tabla_modelos[
+  order(tabla_modelos$AICc),
+]
+
+tabla_modelos
+
+
+#¿Que pasa si nos quedamos con el OU1 original?:
+#Comparamos los valores de los tres ajustes de OU1:
+modelos_OU1 <- list(
+  OU1_completo = fit_OU1,
+  OU1_alpha_diag = fit_OU1_diag,
+  OU1_alpha_sigma_diag = fit_OU1_diag2
+)
+
+tabla_OU1 <- data.frame(
+  Modelo = names(modelos_OU1),
+  Parametros = sapply(modelos_OU1, function(x) x$param$nparam),
+  LogLik = sapply(modelos_OU1, function(x) x$LogLik),
+  AICc = sapply(modelos_OU1, function(x) x$AICc),
+  Convergencia = sapply(modelos_OU1, function(x) x$convergence),
+  Hessiano = sapply(modelos_OU1, function(x) x$hess.values)
+)
+
+tabla_OU1$Delta_AICc <- tabla_OU1$AICc - min(tabla_OU1$AICc)
+
+tabla_OU1$Peso_AICc <- 
+  exp(-0.5 * tabla_OU1$Delta_AICc) /
+  sum(exp(-0.5 * tabla_OU1$Delta_AICc))
+
+tabla_OU1 <- tabla_OU1[order(tabla_OU1$AICc), ]
+
+print(tabla_OU1, digits = 5)
+
+
+##Como regla general, luego de cada ajuste explorar para cada modelo los siguientes valores:
+#Exploramos parametros de los modelos:
+fit_OU1_diag$alpha
+fit_OU1_diag$sigma
+fit_OU1_diag$theta
+fit_OU1_diag$AICc
+
+#Si mvMORPH nos dice que la convergencia no se alcanzo o que el resultado no es confiable:
+fit_OU1_diag$convergence
+fit_OU1_diag$hess.values
+
+
+#####################################################################################
+#Evaluar ajuste a modelos macroevolutivos en función de un predictor (tipo de nido por ejemplo) usando criterio GIC antes de hacer una regresión lineal filogenética para saber cual es el modelo macroevolutivo que mejor explica la correlación. Esto sirve solo para el caso de mvMORPH u otros paquetes que permitan cambiar el modelo macroevolutivo subyacente del análisis (D.pgls de geomorph solo permite BM)
+library(mvMORPH)
+fit1n <- mvgls(fullshapecoords~Type_of_Nest, tree=tree_l, model="BM", penalty="RidgeArch")
+fit2n <- mvgls(fullshapecoords~Type_of_Nest, tree=tree_l, model="OU", penalty="RidgeArch")
+fit3n <- mvgls(fullshapecoords~Type_of_Nest, tree=tree_l, model="EB", penalty="RidgeArch")
+GIC(fit1n); GIC(fit2n); GIC(fit3n)
+
+#Convergencia evolutiva##############################################################
+library(RRphylo)
+#search.conv para una categoria que se quiera evaluar convergencia
+plot.new()
+par(mfrow=c(1,1))
+
+#Categoria  que converge
+P0<-c("nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","proqui","proqui","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","proqui","proqui","proqui","proqui","proqui","proqui","proqui","proqui","proqui","proqui","proqui","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","proqui","proqui")
+names(P0)<-rownames(PC1a3)
+convKinesisP0<-search.conv(tree=tree_l, y=PC1a3, state=P0,declust=TRUE,clus=0)
+
+#Instalamos picante y plotrix para los graficos que pueden realizarse con search.conv
+install.packages("picante")
+install.packages("plotrix")
+library(picante)
+library(plotrix)
+
+plot.new()
+par(mfrow=c(1,2))
+plotConv(convKinesisP0,PC1a3,variable=1,state=P0)->pc
+pc$plotPChull(chull.args = list(border=c("gray70","yellow"),lty=1),
+              points.args = list(pch=c(23,22),bg="gray"),
+              legend.args = list(pch=c(23,22),x="top"))
+pc$plotPolar(polar.args = list(clockwise=TRUE,start=0,rad.col="black",grid.col="black"),
+             polygon.args = list(line.col="green",poly.col=NA,lwd=2),
+             line.args = list(line.col="deeppink",lty=2,lwd=3))
+
+
+#Categoria que no converge
+P3<-c("nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","proqui","nostate","nostate","nostate","nostate","nostate","nostate","nostate","proqui","nostate","nostate","proqui","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate","nostate")
+names(P3)<-rownames(PC1a3)
+convKinesis7<-search.conv(tree=tree_l, y=PC1a3, state=P3,declust=TRUE,clus=0)
+
+plot.new()
+par(mfrow=c(1,2))
+plotConv(convKinesis7,PC1a3,variable=1,state=P0)->pc
+pc$plotPChull(chull.args = list(border=c("gray70","yellow"),lty=1),
+              points.args = list(pch=c(23,22),bg="gray"),
+              legend.args = list(pch=c(23,22),x="top"))
+pc$plotPolar(polar.args = list(clockwise=TRUE,start=0,rad.col="black",grid.col="black"),
+             polygon.args = list(line.col="green",poly.col=NA,lwd=2),
+             line.args = list(line.col="deeppink",lty=2,lwd=3))
