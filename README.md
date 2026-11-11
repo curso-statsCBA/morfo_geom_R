@@ -26,24 +26,25 @@ El curso consta de clases teóricas, ejercicios y laboratorio de análisis de da
 
 ### Día 2.   
 * Teórico: Métodos multivariados en morfometría geométrica. Análisis de componentes principales (PCA) a partir de coordenadas de Procrustes. Análisis de variables Canónicas. Análisis Discriminante, Random Forest, Gaussian Admixture Analysis. Visualización de deformaciones.     
-* Práctico: Métodos multivariados y técnicas de visualización. [LINK](Práctico 3 - Lapas/Lapas.html)   
+* Práctico 3: Métodos multivariados y técnicas de visualización. [LINK](Práctico 3 - Lapas/Lapas.html)   
 * Teórico: Tipos de simetría y asimetría fluctuante.      
-* Práctico: Análisis de la Varianza de Procrustes y asimetría. [LINK](Práctico 4 - Simetría/practico_simetria.html)
+* Práctico 4: Análisis de la Varianza de Procrustes y asimetría. [LINK](Práctico 4 - Simetría/practico_simetria.html)
 
-### Día 3.   
-Extracción de residuales alométricos y PCA corregido por tamaño.
+### Día 3.  
+* Teórico: Alometría.   
+* Pŕactico 5: Alometría, tamaño del centroide, regresión de forma sobre tamaño, extracción de residuales alométricos y PCA corregido por tamaño. [LINK](Práctico 6 - Modularidad/Modularidad.html)   
 * Teórico: Integración y modularidad.     
-* Práctico: Diseño de hipótesis de partición de módulos (anatómicos, funcionales y de desarrollo). Variación intra e interespecífica.      
-Mínimos cuadrados parciales (PLS) entre subconjuntos de landmarks. [LINK](Práctico 5 - Modularidad/Modularidad.html)         
-* Práctico: Taller de análisis de datos aportados por estudiantes.   
+* Práctico 6: Diseño de hipótesis de partición de módulos (anatómicos, funcionales y de desarrollo). Variación intra e interespecífica.      
+Mínimos cuadrados parciales (PLS) entre subconjuntos de landmarks. [LINK](Práctico 6 - Modularidad/Modularidad.html)         
+* Práctico 7: Taller de análisis de datos aportados por estudiantes.   
 
 ### Día 4.   
-* Teórico: Morfometría e introducción a métodos comparativos filogenéticos.     
-* Práctico: Importación y manipulación básica de árboles filogenéticos. Señal filogenética en datos multivariados. Filomorfoespacios y Análisis de Componentes Principales Filogenéticos. Regresiones filogenéticas (mínimos cuadrados generalizados filogenéticos, MANOVA filogenético).    
-* Teórico: Reconstrucción de Estados ancestrales.   
-* Práctico: Reconstrucción de Estados ancestrales, mapeo de variables ecológicas sobre filogenias. Ejercicios integradores.   
+* Teórico: Métodos comparativos filogenéticos.     
+* Práctico 8: Importación y manipulación básica de árboles filogenéticos. Señal filogenética. Filomorfoespacios y Análisis de Componentes Principales Filogenéticos. Regresiones lineales (mínimos cuadrados generalizados filogenéticos, MANOVA filogenético). Modularidad evolutiva.    
+* Teórico: Fósiles en filogenias moleculares y paleoecología.      
+* Práctico 9: Incorporación de fósiles en filogenias moleculares y estimación de paleoecología.     
 
 ### Día 5.   
-* Teórico:  Macroevolución de la forma y métodos comparativos filogenéticos avanzados.     
-* Práctico: Tempo: tasas de evolución fenotípica, Modo: disparidad morfológica, modelos macroevolutivos.      
+* Teórico:  Macroevolución.     
+* Práctico 10: Tempo: tasas de evolución fenotípica, Modo: disparidad morfológica, modelos macroevolutivos.      
 * Evaluación.     
