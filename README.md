@@ -48,7 +48,7 @@ Mínimos cuadrados parciales (PLS) entre subconjuntos de landmarks. [LINK](Prác
 
 ### Día 4.   
 * Teórico: Métodos comparativos filogenéticos.     
-* Práctico 8: Importación y manipulación básica de árboles filogenéticos. Señal filogenética. Filomorfoespacios y Análisis de Componentes Principales Filogenéticos. Regresiones lineales (mínimos cuadrados generalizados filogenéticos, MANOVA filogenético). Modularidad evolutiva.    
+* Práctico 8: Importación y manipulación básica de árboles filogenéticos. Señal filogenética. Filomorfoespacios y Análisis de Componentes Principales Filogenéticos. Regresiones lineales (mínimos cuadrados generalizados filogenéticos, MANOVA filogenético). Modularidad evolutiva. [LINK](Práctico 8 - Met Comp/Práctico_8_Introducción_Métodos_Comparativos.html)            
 * Teórico: Fósiles en filogenias moleculares y paleoecología.      
 * Práctico 9: Incorporación de fósiles en filogenias moleculares y estimación de paleoecología.     
 
