@@ -1,0 +1,119 @@
+########################################
+######## Análisis de alometría ##########
+########################################
+# Cargar las librerías necesarias
+library(StereoMorph)
+library(geomorph)
+library(RRPP)
+library(ggplot2)
+
+#### Lectura de Shapes de Harmonia axyridis####
+# usamos el mismo set de datos que en simetría
+myShapes <- readShapes("Shapes_axyridis")
+mydata <- readland.shapes(myShapes)
+link <- read.table("link_axy.txt")
+
+#### Análisis de Procrusto (GPA) ####
+axy.gpa <- gpagen(mydata, print.progress = F)
+summary(axy.gpa)
+
+# como tenemos dos réplicas en el set de datos original, 
+# vamos a quedarnos con una sola para hacer los análisis
+ids <- dimnames(axy.gpa$coords)[[3]] # Extracción de nombres
+
+sel_X <- grepl("X$", ids) # Seleccionar la réplica X
+# grepl --> nos devuelve una vector con TRUE o FALSE según lo que queremos encontrar.
+
+axy.X <- axy.gpa
+axy.X$coords <- axy.gpa$coords[, , sel_X]
+
+Csize <- axy.gpa$Csize # obtenemos el tamaño del centroide
+
+logCS <- log(Csize) # Transformación logarítmica del tamaño.
+# Esto se hace porque los organismos crecen de manera proporcional, entonces 
+# la transformación logarítmica convierte esos cambios proporcionales en incrementos lineales.
+# La pendiente de la recta nos permite leer si la forma del organismo cambia con el tamaño (alometría)
+# o si se mantiene constante (isometría).
+axy.gpa$logCS <- logCS
+axy.X$logCS <- axy.gpa$logCS[sel_X]
+
+# Variable de manejo como factor porque queremos ver si hay diferencia entre los manejos
+axy.gpa$man <- substr(dimnames(axy.gpa$coords)[[3]], 5, 6)
+axy.gpa$man <- factor(axy.gpa$man)
+# Ag = agroecológico, Cv = convencional.
+axy.X$man <- droplevels(axy.gpa$man[sel_X])
+
+#### Análisis de alometría ####
+# Si queremos saber si la relación entre tamaño y forma es similar en ambos tipos de manejo.
+# Modelo con interacción entre tamaño y manejo
+allom_man_X <- procD.lm(coords ~ logCS * man, data = axy.X, iter = 999, 
+                        RRPP = TRUE, print.progress = FALSE)
+# agregamos como interacción el manejo,
+# para evaluar si la relación entre tamaño y forma cambia dependiendo del manejo.
+summary(allom_man_X)
+# No hay evidencia de que el manejo modifique la relación alométrica entre tamaño y forma.
+
+plot(allom_man_X, type = "regression", predictor = axy.X$logCS)
+
+# Vamos a comparar los vectores alométricos de ambos manejos 
+PW_slopes <- pairwise(allom_man_X, groups = axy.X$man, covariate = axy.X$logCS)
+
+summary(PW_slopes, test.type = "VC") # Compara la orientación de los vectores.
+summary(PW_slopes, test.type = "dist") # Magnitud de las diferencias en el cambio de forma
+summary(PW_slopes, show.vectors = TRUE)
+
+# Como no hay diferencia entre el manejo, simplificamos el modelo
+allom_X <- procD.lm(coords ~ logCS, data = axy.X, 
+                    iter = 999, RRPP = TRUE, print.progress = FALSE)
+summary(allom_X)
+
+plot_alo <- plot(allom_X, type = "regression", predictor = axy.X$logCS)
+
+# Obtenemos los residuos para separar la variación de la forma asociada al tamaño 
+# de aquella que no puede explicarse por el tamaño
+res_allom <- allom_X$residuals
+
+pca_res <- prcomp(res_allom, center = TRUE, scale. = FALSE)
+summary(pca_res)
+
+scores <- as.data.frame(pca_res$x) # Obtenemos los datos de cada individuo
+scores$ind <- rownames(scores)
+scores$man <- axy.X$man[match(scores$ind, dimnames(axy.X$coords)[[3]])] # Agregamos el manejo
+
+ggplot(scores, aes(x = PC1, y = PC2, color = man)) +
+  geom_point(size = 3, alpha = 0.8) +
+  stat_ellipse(level = 0.95) +
+  scale_color_manual(
+    values = c("Ag" = "darkgreen", "Cv" = "orange")
+  ) +
+  labs(
+    x = paste0("PC1"),
+    y = paste0("PC2"),
+    color = "Manejo"
+  ) +
+  theme_classic() +
+  theme(
+    axis.title = element_text(size = 12),
+    legend.title = element_text(size = 11)
+  )
+
+
+ref <- mshape(axy.X$coords) # Consenso
+
+# Para poder realizar los máximos y mínimos se toma los datos del PC1
+# porque los datos provienen del gráfico de alometría que realizamos antes
+preds_pc1 <- shape.predictor(allom_X$GM$fitted,
+                             x = plot_alo$RegScore[, 1], Intercept = FALSE,
+                             pred1 = min(plot_alo$RegScore[, 1]), 
+                             pred2 = max(plot_alo$RegScore[, 1])
+)
+
+
+layout(matrix(1:2, 1, 2))
+plotRefToTarget(preds_pc1$pred1, ref, mag= 10, links = link, method = "TPS")
+title("pc1_min")
+plotRefToTarget(preds_pc1$pred2, ref, mag= 10, links = link, method = "TPS")
+title("pc1_max")
+layout(1)
+
+# Prestar atención que ambos gráficos están magnificados para que pueda verse la diferencia.

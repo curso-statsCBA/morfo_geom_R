@@ -35,7 +35,7 @@ El curso consta de clases teóricas, ejercicios y laboratorio de análisis de da
 
 ### Día 3.  
 * Teórico: Alometría.   
-* Pŕactico 5: Alometría, tamaño del centroide, regresión de forma sobre tamaño, extracción de residuales alométricos y PCA corregido por tamaño. [LINK](Práctico 6 - Modularidad/Modularidad.html)   
+* Pŕactico 5: Alometría, tamaño del centroide, regresión de forma sobre tamaño, extracción de residuales alométricos y PCA corregido por tamaño. [LINK](Práctico 5 - Alometría/practico_alometria.html)   
 * Teórico: Integración y modularidad.     
 * Práctico 6: Diseño de hipótesis de partición de módulos (anatómicos, funcionales y de desarrollo). Variación intra e interespecífica.      
 Mínimos cuadrados parciales (PLS) entre subconjuntos de landmarks. [LINK](Práctico 6 - Modularidad/Modularidad.html)         
