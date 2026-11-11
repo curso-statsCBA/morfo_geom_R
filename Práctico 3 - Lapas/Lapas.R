@@ -6,6 +6,7 @@ library(MASS)
 library(randomForest)
 library(mclust)
 library(vegan)
+library(Morpho)
 
 # ============================================================
 # 0. PROCESADO DE FOTOS
@@ -274,9 +275,19 @@ plotRefToTarget(
 
 mtext("PC2 - Mean")
 
+# ============================================================
+# 11. Análisis de Variables Canónicas
+# ============================================================
+
+cva_result <- CVA(
+  dataarray = Y.gpa$coords,
+  groups = Y.gpa$grupo
+)
+
+plot(cva_result)
 
 # ============================================================
-# 11. Analisis Discriminante
+# 12. Analisis Discriminante
 # ============================================================
 
 ### A. Separar individuos con grupo conocido
@@ -383,7 +394,7 @@ ggplot(DAT.LDA, aes(x = LD1, y = 0, color = grupo)) +
 
 
 ### =========================================================
-### 12. RANDOM FOREST
+### 13. RANDOM FOREST
 ### =========================================================
 
 ### A. Ajustar Random Forest ---------------------------------
@@ -499,7 +510,7 @@ ggplot() +
 
 
 ### =========================================================
-### 13. GAUSSIAN ADMIXTURE ANALYSIS
+### 14. GAUSSIAN ADMIXTURE ANALYSIS
 ### =========================================================
 
 ### A. Buscar mejor modelo

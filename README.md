@@ -21,17 +21,17 @@ El curso consta de clases teóricas, ejercicios y laboratorio de análisis de da
 
 ### Día 1.   
 * Teórico: Contenido de la materia. Introducción a la morfometría geométrica.     
-* Práctico: Técnicas para toma de datos en animales y plantas. Introducción al uso de R en Morfometría Geométrica. Digitalización de landmarks y semilandmarks con *Steromorph*.     
-* Práctico: Pŕactica de digitalización 2D. 
-* Práctico: Estructura de datos de coordenadas en R. Superimposición generalizada de Procrustes.   
+* Práctico 1: Técnicas para toma de datos en animales y plantas. Introducción al uso de R en Morfometría Geométrica. *Puesta a punto*    
+* Práctico 2: Digitalización de landmarks y semilandmarks con *Stereomorph*. Importación de archivos .tps. Estructura de datos de coordenadas en R. Superimposición generalizada de Procrustes. Análisis de Componentes Pincipales. Missing data. [LINK](Práctico 2 - Digitalización/Digitalización_Stereomorph.html)    
 
 ### Día 2.   
-* Teórico: Métodos multivariados en morfometría geométrica. Análisis de componentes principales (PCA) a partir de coordenadas de Procrustes. Análisis de variables Canónicas (CVA). Análisis Discriminante (LDA). Visualización de deformaciones.     
-* Práctico: Métodos multivariados y técnicas de visualización. [LINK](Práctico 3 - Lapas/Ejercicio/Lapas.html)   
-* Teórico: Tipos de simetría y asimetría fluctuante. Alometría.      
-* Práctico: Análisis de la Varianza de Procrustes y regresiones alométricas. MANOVA. Extracción de residuales alométricos y PCA corregido por tamaño.
+* Teórico: Métodos multivariados en morfometría geométrica. Análisis de componentes principales (PCA) a partir de coordenadas de Procrustes. Análisis de variables Canónicas. Análisis Discriminante, Random Forest, Gaussian Admixture Analysis. Visualización de deformaciones.     
+* Práctico: Métodos multivariados y técnicas de visualización. [LINK](Práctico 3 - Lapas/Lapas.html)   
+* Teórico: Tipos de simetría y asimetría fluctuante.      
+* Práctico: Análisis de la Varianza de Procrustes y asimetría. [LINK](Práctico 4 - Simetría/practico_simetria.html)
 
 ### Día 3.   
+Extracción de residuales alométricos y PCA corregido por tamaño.
 * Teórico: Integración y modularidad.     
 * Práctico: Diseño de hipótesis de partición de módulos (anatómicos, funcionales y de desarrollo). Variación intra e interespecífica.      
 Mínimos cuadrados parciales (PLS) entre subconjuntos de landmarks. [LINK](Práctico 5 - Modularidad/Modularidad.html)         
