@@ -22,7 +22,7 @@ library(vegan)
 # 1. CARGAR SHAPES
 # ============================================================
 
-shapes <- readShapes("Práctico 3 - Lapas/Ejercicio/shapes")
+shapes <- readShapes("shapes_lapas")
 
 shapesGM <- readland.shapes(
   shapes,
@@ -30,7 +30,7 @@ shapesGM <- readland.shapes(
 )
 
 link <- read.table(
-  "Práctico 3 - Lapas/Ejercicio/link.txt",
+  "link_lapas.txt",
   header = FALSE,
   sep = ""
 )

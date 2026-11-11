@@ -1,0 +1,4 @@
+ts	LM1	LM2
+c1	LM8	LM9
+c2	LM9	LM6
+ti	LM10	LM8
