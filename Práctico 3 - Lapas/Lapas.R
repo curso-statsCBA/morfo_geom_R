@@ -23,7 +23,7 @@ library(Morpho)
 # 1. CARGAR SHAPES
 # ============================================================
 
-shapes <- readShapes("shapes_lapas")
+shapes <- readShapes("Práctico 3 - Lapas/shapes_lapas")
 
 shapesGM <- readland.shapes(
   shapes,
@@ -279,12 +279,27 @@ mtext("PC2 - Mean")
 # 11. Análisis de Variables Canónicas
 # ============================================================
 
+## sin reducir dimensionalidad (don't)
 cva_result <- CVA(
   dataarray = Y.gpa$coords,
   groups = Y.gpa$grupo
 )
 
-plot(cva_result)
+plot(cva_result$CVscores, col = Y.gpa$grupo, pch = 19)
+
+## reducinedo dimensionalidad
+cva_result2 <- CVA(
+  dataarray = PCA$x[, 1:3],
+  groups = Y.gpa$grupo
+)
+
+plot(cva_result2$CVscores, col = Y.gpa$grupo, pch = 19)
+
+cva_perm <- CVA(
+  PCA$x[, 1:13], groups = Y.gpa$grupo,
+  weighting = TRUE, rounds = 999, cv = FALSE)
+cva_perm$Dist$probsMaha
+
 
 # ============================================================
 # 12. Analisis Discriminante
