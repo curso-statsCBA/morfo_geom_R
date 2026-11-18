@@ -1,6 +1,7 @@
 # Introducción a la Morfometría Geométrica en R 
 ## Aplicaciones en Métodos Comparativos Filogenéticos
 
+![](curso_mg_2026.jpeg)
 
 Curso de posgrado para el doctorado en Cs. Biológicas de la Universidad Nacional de Córdoba.   
 
