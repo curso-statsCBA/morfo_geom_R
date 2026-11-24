@@ -36,7 +36,7 @@ pak::pak("millacarmona/morphospace")
 El curso consta de clases teóricas, ejercicios y laboratorio de análisis de datos.   
 
 ### Día 1.   
-* Teórico: Contenido de la materia. Introducción a la morfometría geométrica.     
+* Teórico: Contenido de la materia. Introducción a la morfometría geométrica. [LINK](https://docs.google.com/presentation/d/14HjcTMA2vL0IT9h0nH30_Vn2y931dAsS/edit?usp=sharing&ouid=100272770721507922802&rtpof=true&sd=true)     
 * Práctico 1: Técnicas para toma de datos en animales y plantas. Introducción al uso de R en Morfometría Geométrica. *Puesta a punto*  [LINK](https://drive.google.com/file/d/1zPAyvAwPt9FXmNk7AX3z4nFx1GUAqhuf/view?usp=sharing)  
 * Práctico 2: Digitalización de landmarks y semilandmarks con *Stereomorph*. Importación de archivos .tps. Estructura de datos de coordenadas en R. Superimposición generalizada de Procrustes. Análisis de Componentes Pincipales. Missing data. [LINK](Práctico 2 - Digitalización/Digitalización_Stereomorph.html)[LINK presentación](https://drive.google.com/file/d/16vzy-W5or7Aeeqm7uP5tVeSCcwYoT7Tk/view?usp=sharing)    
 
@@ -50,14 +50,13 @@ El curso consta de clases teóricas, ejercicios y laboratorio de análisis de da
 * Teórico: Alometría. [LINK](https://drive.google.com/file/d/1JGm3olp1N_tvLl7PoVXvKv-CtPfg4fhj/view?usp=sharing)  
 * Pŕactico 5: Alometría, tamaño del centroide, regresión de forma sobre tamaño, extracción de residuales alométricos y PCA corregido por tamaño. [LINK](Práctico 5 - Alometría/practico_alometria.html)   
 * Teórico: Integración y modularidad. [LINK](https://docs.google.com/presentation/d/1FUTe6gR4gqBTTe53-tR9nad71vqUmUBhfUHyXTf1_4Q/edit?usp=sharing)     
-* Práctico 6: Diseño de hipótesis de partición de módulos (anatómicos, funcionales y de desarrollo). Variación intra e interespecífica.      
-Mínimos cuadrados parciales (PLS) entre subconjuntos de landmarks. [LINK](Práctico 6 - Modularidad/Modularidad.html)         
+* Práctico 6: Diseño de hipótesis de partición de módulos (anatómicos, funcionales y de desarrollo). Variación intra e interespecífica. Mínimos cuadrados parciales (PLS) entre subconjuntos de landmarks. [LINK](Práctico 6 - Modularidad/Modularidad.html)         
 * Práctico 7: Taller de análisis de datos aportados por estudiantes.   
 
 ### Día 4.   
 * Teórico: Métodos comparativos filogenéticos. [LINK](https://docs.google.com/presentation/d/1PGhbWXMSweNiu-SnaT7Iwbvh-GcDCfd6fvSbi72wt1U/edit?usp=sharing)     
 * Práctico 8: Importación y manipulación básica de árboles filogenéticos. Señal filogenética. Filomorfoespacios y Análisis de Componentes Principales Filogenéticos. Regresiones lineales (mínimos cuadrados generalizados filogenéticos, MANOVA filogenético). Modularidad evolutiva. [LINK](Práctico 8 - Met Comp/Práctico_8_Introducción_Métodos_Comparativos.html)            
-* Teórico: Fósiles en filogenias moleculares y paleoecología.      
+* Teórico: Fósiles en filogenias moleculares y paleoecología.[LINK](https://docs.google.com/presentation/d/1tN4E4w-O0-bzNBWKYIEVTeIONkJL9t3T/edit?usp=sharing&ouid=100272770721507922802&rtpof=true&sd=true)      
 * Práctico 9: Incorporación de fósiles en filogenias moleculares y estimación de paleoecología. [LINK](Práctico 9 - Estimación Paleoecología/Práctico-9---Estimación-Paleoecologia-y-Reconstrucción-de-Estados-Ancestrales.html)     
 
 ### Día 5.   
